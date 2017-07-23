@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Dynamic Gifs</title>
+</head>
+
+<body>
+    <form id="character-form">
+        <label for="character-choice">Select Your Player</label>
+        <div id="character-choice">
+        <br>
+        <div id="character-view"></div>
+        </div>
+        <div id="gifs-appear-here">
+        </div>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script type="text/javascript">
+        var smashBros = ["Luigi", "Mario", "Ness", "Donkey Kong", "Link", "Yoshi", "Captain Falcon", "Samus", "Pikachu",
+            "Jigglypuff"];
+
+
+
+        function displayCharacterGif() {
+
+            var character = $(this).attr("data-name");
+            var queryURL = "http://api.giphy.com/v1/gifs/search?q=" +
+                character + "&api_key=acdb23b2dcdd48f58d051fbb0f1e08b6";
+
+            $.ajax({
+                    url: queryURL,
+                    method: "GET"
+                })
+                .done(function(response) {
+                    console.log(response);
+                    var results = response.data;
+
+
+                    for (var i = 0; i < results.length; i++) {
+
+
+                        if (results[i].rating !== "r" && results[i].rating !== "pg-13") {
+
+                            var gifDiv = $("<div class='item'>");
+                            var rating = results[i].rating;
+                            var characterImage = $("<img>");
+                            characterImage.attr("src", results[i].images.fixed_height.url);
+                            gifDiv.append(characterImage);
+                            $("#gifs-appear-here").prepend(gifDiv);
+                        }
+                    }
+                });
+
+        }
+
+        function createButtons() {
+
+            for (var i = 0; i < smashBros.length; i++) {
+                var a = $("<div class='character'>");
+                a.attr("data-name", smashBros[i]);
+                a.text(smashBros[i]);
+                $("#character-view").append(a);
+            }
+        }
+
+        $(document).on("click", ".character", displayCharacterGif);
+        createButtons();
+        </script>
+</body>
+
+</html>
